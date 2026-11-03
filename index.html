@@ -152,13 +152,6 @@ async function ejecutar(accion) {
   const clave = obtenerClave();
   if (!clave) return;
 
-  if (clave === null) return;
-
-  if (!clave) {
-    resultado.textContent = "Debes introducir la clave.";
-    return;
-  }
-
   resultado.textContent = "Enviando solicitud...";
 
   try {
@@ -194,13 +187,6 @@ async function actualizarTemperaturas() {
 
   const clave = obtenerClave();
   if (!clave) return;
-
-  if (clave === null) return;
-
-  if (!clave) {
-    estado.textContent = "Debes introducir la clave.";
-    return;
-  }
 
   boton.disabled = true;
   estado.textContent = "Consultando SmartThings...";
