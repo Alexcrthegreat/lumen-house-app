@@ -65,13 +65,24 @@
       <h2>🌡️ Aerotermia Samsung</h2>
       <p>Temperatura actual: -- °C</p>
       <p>Temperatura objetivo: -- °C</p>
+      
+<div class="buttons">
+  <button onclick="ejecutar('activar')">
+    Activar avisos
+  </button>
+  <button onclick="ejecutar('desactivar')">
+    Desactivar avisos
+  </button>
+  <button onclick="ejecutar('comprobar')">
+    Comprobar ACS
+  </button>
+  <button onclick="ejecutar('consultar_temperatura')">
+    Consultar temperatura
+  </button>
+</div>
 
-      <div class="buttons">
-        <button>Activar avisos</button>
-        <button>Desactivar avisos</button>
-        <button>Comprobar ACS</button>
-        <button>Consultar temperatura</button>
-      </div>
+<p id="resultado" role="status" aria-live="polite"></p>
+
 
       <p class="note">
         Controles pendientes de conectar con GitHub.
@@ -97,5 +108,54 @@
   }
 </script>
 
+<script>
+const API_URL =
+  "https://lumen-house-api.st08280.workers.dev/api/acs";
+
+async function ejecutar(accion) {
+  const resultado = document.getElementById("resultado");
+
+  const clave = prompt(
+    "Introduce la clave de acceso de Lumen House:"
+  );
+
+  if (clave === null) return;
+
+  if (!clave) {
+    resultado.textContent = "Debes introducir la clave.";
+    return;
+  }
+
+  resultado.textContent = "Enviando solicitud...";
+
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + clave
+      },
+      body: JSON.stringify({ accion })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      resultado.textContent =
+        data.error || "Error al ejecutar la rutina.";
+      return;
+    }
+
+    resultado.textContent =
+      "Solicitud enviada: " + accion;
+
+  } catch (error) {
+    resultado.textContent =
+      "No se ha podido conectar con Cloudflare.";
+  }
+}
+</script>
+
+  
 </body>
 </html>
