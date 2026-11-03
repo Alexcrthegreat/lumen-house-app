@@ -131,6 +131,7 @@
 </section>
 
   </main>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
   
 <script>
   if ("serviceWorker" in navigator) {
@@ -251,6 +252,121 @@ async function actualizarTemperaturas() {
     boton.disabled = false;
   }
 }
+
+let graficaMar = null;
+
+async function cargarGraficaMar() {
+  const estado = document.getElementById("mar-estado");
+  const temperatura = document.getElementById("mar-temperatura");
+  const fecha = document.getElementById("mar-fecha");
+
+  estado.textContent = "Cargando temperaturas del mar...";
+
+  try {
+    const respuesta = await fetch(
+      "https://lumen-house-api.st08280.workers.dev/api/mar"
+    );
+
+    if (!respuesta.ok) {
+      throw new Error("Error HTTP " + respuesta.status);
+    }
+
+    const datos = await respuesta.json();
+    const registros = datos.temperaturas || [];
+
+    if (!registros.length) {
+      throw new Error("No hay temperaturas disponibles");
+    }
+
+    const ultimo = registros[registros.length - 1];
+
+    temperatura.textContent =
+      ultimo.temperatura.toFixed(1).replace(".", ",") + " °C";
+
+    fecha.textContent =
+      "Fecha: " +
+      ultimo.fecha.split("-").reverse().join("/");
+
+    const etiquetas = registros.map(dato =>
+      dato.fecha.split("-").reverse().join("/")
+    );
+
+    const valores = registros.map(dato =>
+      dato.temperatura
+    );
+
+    const contexto = document.getElementById(
+      "grafica-mar"
+    ).getContext("2d");
+
+    if (graficaMar) {
+      graficaMar.destroy();
+    }
+
+    graficaMar = new Chart(contexto, {
+      type: "line",
+      data: {
+        labels: etiquetas,
+        datasets: [{
+          label: "Temperatura del mar (°C)",
+          data: valores,
+          borderColor: "#0088cc",
+          backgroundColor: "rgba(0,136,204,0.08)",
+          borderWidth: 2,
+          pointRadius: 0,
+          pointHoverRadius: 5,
+          tension: 0.2,
+          fill: true,
+          spanGaps: false
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: "nearest",
+          intersect: false
+        },
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: contexto =>
+                contexto.parsed.y.toFixed(1) + " °C"
+            }
+          },
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          x: {
+            ticks: {
+              maxTicksLimit: 7,
+              maxRotation: 0
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: "°C"
+            }
+          }
+        }
+      }
+    });
+
+    estado.textContent =
+      registros.length + " temperaturas disponibles · " +
+      datos.fuente;
+
+  } catch (error) {
+    console.error("Error gráfica mar:", error);
+    estado.textContent =
+      "No se ha podido cargar la gráfica del mar.";
+  }
+}
+
+window.addEventListener("load", cargarGraficaMar);
 
 </script>
 
