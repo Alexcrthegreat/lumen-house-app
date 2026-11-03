@@ -103,12 +103,33 @@
       </p>
     </section>
 
-    <section class="card">
-      <h2>🌊 Temperatura del mar</h2>
-      <h3>El Port de la Selva</h3>
-      <p>Temperatura actual: -- °C</p>
-      <p>Gráfico histórico: pendiente de conectar.</p>
-    </section>
+   
+<section class="card">
+  <h2>🌊 Temperatura del mar</h2>
+  <h3>El Port de la Selva</h3>
+
+  <p>
+    Última temperatura:
+    <strong id="mar-temperatura">-- °C</strong>
+  </p>
+
+  <p id="mar-fecha">Fecha: --</p>
+
+  <h3>Evolución de los últimos 12 meses</h3>
+
+  <div style="position:relative; width:100%; height:300px;">
+    <canvas id="grafica-mar"></canvas>
+  </div>
+
+  <p id="mar-estado" role="status">
+    Gráfica pendiente de cargar.
+  </p>
+
+  <p class="note">
+    Fuente: SeaTemperature.info
+  </p>
+</section>
+
   </main>
   
 <script>
