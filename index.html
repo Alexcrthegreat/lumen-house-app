@@ -340,10 +340,18 @@ async function cargarGraficaMar() {
         },
         scales: {
           
+
 x: {
+  grid: {
+    display: false
+  },
   ticks: {
     autoSkip: false,
     maxRotation: 0,
+    minRotation: 0,
+    font: {
+      size: 11
+    },
     callback: function(value, index) {
       const fecha = registros[index]?.fecha;
 
@@ -353,6 +361,9 @@ x: {
       const mes = Number(fecha.substring(5, 7));
 
       if (dia !== "01") return "";
+
+      // Mostrar un mes de cada dos
+      if (mes % 2 !== 0) return "";
 
       const nombresMeses = [
         "Ene", "Feb", "Mar", "Abr",
@@ -364,6 +375,7 @@ x: {
     }
   }
 },
+
 
           y: {
             title: {
