@@ -94,7 +94,9 @@
 </div>
 
 <p id="resultado" role="status" aria-live="polite"></p>
-
+<button onclick="cerrarSesion()">
+  Cerrar sesión
+</button>
 
       <p class="note">
         Controles pendientes de conectar con GitHub.
@@ -124,12 +126,31 @@
 const API_URL =
   "https://lumen-house-api.st08280.workers.dev/api/acs";
 
+function obtenerClave() {
+  let clave = localStorage.getItem("lumen_house_key");
+
+  if (!clave) {
+    clave = prompt("Introduce la clave de acceso de Lumen House:");
+
+    if (!clave) return null;
+
+    localStorage.setItem("lumen_house_key", clave);
+  }
+
+  return clave;
+}
+
+function cerrarSesion() {
+  localStorage.removeItem("lumen_house_key");
+  alert("Clave eliminada de este dispositivo.");
+}
+
+  
 async function ejecutar(accion) {
   const resultado = document.getElementById("resultado");
 
-  const clave = prompt(
-    "Introduce la clave de acceso de Lumen House:"
-  );
+  const clave = obtenerClave();
+if (!clave) return;
 
   if (clave === null) return;
 
@@ -171,9 +192,8 @@ async function actualizarTemperaturas() {
   const estado = document.getElementById("estado-temperaturas");
   const boton = document.getElementById("btn-temperaturas");
 
-  const clave = prompt(
-    "Introduce la clave de acceso de Lumen House:"
-  );
+  const clave = obtenerClave();
+if (!clave) return;
 
   if (clave === null) return;
 
