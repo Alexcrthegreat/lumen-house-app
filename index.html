@@ -339,12 +339,32 @@ async function cargarGraficaMar() {
           }
         },
         scales: {
-          x: {
-            ticks: {
-              maxTicksLimit: 7,
-              maxRotation: 0
-            }
-          },
+          
+x: {
+  ticks: {
+    autoSkip: false,
+    maxRotation: 0,
+    callback: function(value, index) {
+      const fecha = registros[index]?.fecha;
+
+      if (!fecha) return "";
+
+      const dia = fecha.substring(8, 10);
+      const mes = Number(fecha.substring(5, 7));
+
+      if (dia !== "01") return "";
+
+      const nombresMeses = [
+        "Ene", "Feb", "Mar", "Abr",
+        "May", "Jun", "Jul", "Ago",
+        "Sep", "Oct", "Nov", "Dic"
+      ];
+
+      return nombresMeses[mes - 1];
+    }
+  }
+},
+
           y: {
             title: {
               display: true,
