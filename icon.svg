@@ -1,0 +1,26 @@
+
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="105" fill="#17324d"/>
+
+  <!-- Casa -->
+  <path d="M100 245 L256 115 L412 245"
+        fill="none" stroke="white"
+        stroke-width="25" stroke-linecap="round"
+        stroke-linejoin="round"/>
+  <path d="M145 225 V370 H367 V225"
+        fill="none" stroke="white"
+        stroke-width="20" stroke-linejoin="round"/>
+
+  <!-- Termometro -->
+  <rect x="218" y="245" width="24" height="85"
+        rx="12" fill="#f4a261"/>
+  <circle cx="230" cy="340" r="27" fill="#f4a261"/>
+
+  <!-- Olas -->
+  <path d="M270 300 Q300 280 330 300
+           M270 330 Q300 310 330 330
+           M270 360 Q300 340 330 360"
+        fill="none" stroke="#5bc0eb"
+        stroke-width="12" stroke-linecap="round"/>
+</svg>
