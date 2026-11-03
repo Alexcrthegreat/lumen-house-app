@@ -63,8 +63,20 @@
   <main>
     <section class="card">
       <h2>🌡️ Aerotermia Samsung</h2>
-      <p>Temperatura actual: -- °C</p>
-      <p>Temperatura objetivo: -- °C</p>
+      <p>Temperatura actual:
+  <strong id="temp-actual">-- °C</strong>
+</p>
+
+<p>Temperatura objetivo:
+  <strong id="temp-objetivo">-- °C</strong>
+</p>
+
+<button id="btn-temperaturas" onclick="actualizarTemperaturas()">
+  🌡️ Actualizar temperaturas
+</button>
+
+<p id="estado-temperaturas" role="status" aria-live="polite"></p>
+<p id="fecha-temperaturas" class="note"></p>
       
 <div class="buttons">
   <button onclick="ejecutar('activar')">
@@ -154,6 +166,65 @@ async function ejecutar(accion) {
       "No se ha podido conectar con Cloudflare.";
   }
 }
+  
+async function actualizarTemperaturas() {
+  const estado = document.getElementById("estado-temperaturas");
+  const boton = document.getElementById("btn-temperaturas");
+
+  const clave = prompt(
+    "Introduce la clave de acceso de Lumen House:"
+  );
+
+  if (clave === null) return;
+
+  if (!clave) {
+    estado.textContent = "Debes introducir la clave.";
+    return;
+  }
+
+  boton.disabled = true;
+  estado.textContent = "Consultando SmartThings...";
+
+  try {
+    const response = await fetch(
+      "https://lumen-house-api.st08280.workers.dev/api/temperaturas",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + clave
+        },
+        body: JSON.stringify({})
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      estado.textContent =
+        data.error || "Error al consultar temperaturas.";
+      return;
+    }
+
+    document.getElementById("temp-actual").textContent =
+      Number(data.actual).toFixed(1) + " °C";
+
+    document.getElementById("temp-objetivo").textContent =
+      Number(data.objetivo).toFixed(1) + " °C";
+
+    document.getElementById("fecha-temperaturas").textContent =
+      "Consulta: " + new Date(data.fecha).toLocaleString("es-ES");
+
+    estado.textContent = "Temperaturas consultadas correctamente.";
+
+  } catch (error) {
+    estado.textContent =
+      "No se ha podido conectar con Cloudflare.";
+  } finally {
+    boton.disabled = false;
+  }
+}
+
 </script>
 
   
