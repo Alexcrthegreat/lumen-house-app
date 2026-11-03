@@ -1,0 +1,86 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lumen House</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f6f9;
+      margin: 0;
+      color: #243447;
+    }
+    header {
+      background: #17324d;
+      color: white;
+      padding: 28px 20px;
+      text-align: center;
+    }
+    header h1 { margin: 0 0 8px; }
+    main {
+      max-width: 650px;
+      margin: auto;
+      padding: 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 18px;
+      box-shadow: 0 2px 10px #00000010;
+    }
+    .card h2 { margin-top: 0; }
+    .buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    button {
+      padding: 15px 8px;
+      border: none;
+      border-radius: 9px;
+      background: #176ca0;
+      color: white;
+      font-size: 14px;
+    }
+    .note {
+      font-size: 13px;
+      color: #667788;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Lumen House</h1>
+    <div>Control y monitorización</div>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>🌡️ Aerotermia Samsung</h2>
+      <p>Temperatura actual: -- °C</p>
+      <p>Temperatura objetivo: -- °C</p>
+
+      <div class="buttons">
+        <button>Activar avisos</button>
+        <button>Desactivar avisos</button>
+        <button>Comprobar ACS</button>
+        <button>Consultar temperatura</button>
+      </div>
+
+      <p class="note">
+        Controles pendientes de conectar con GitHub.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>🌊 Temperatura del mar</h2>
+      <h3>El Port de la Selva</h3>
+      <p>Temperatura actual: -- °C</p>
+      <p>Gráfico histórico: pendiente de conectar.</p>
+    </section>
+  </main>
+</body>
+</html>
