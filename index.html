@@ -101,6 +101,40 @@
       <p class="note">
         Controles pendientes de conectar con GitHub.
       </p>
+
+<div style="margin-top:20px;">
+  <h3>🔑 Renovar token Samsung</h3>
+
+  <p class="note">
+    Genera un nuevo token en SmartThings y pégalo aquí.
+  </p>
+
+  <a href="https://account.smartthings.com/tokens"
+     target="_blank"
+     rel="noopener noreferrer">
+    Generar nuevo token Samsung
+  </a>
+
+  <p>
+    <input
+      type="password"
+      id="nuevo-token-samsung"
+      placeholder="Pegar nuevo token"
+      autocomplete="off"
+      style="width:100%;box-sizing:border-box;padding:12px;">
+  </p>
+
+  <button type="button" onclick="actualizarTokenSamsung()">
+    Actualizar token Samsung
+  </button>
+
+  <p id="estado-token-samsung" role="status"></p>
+</div>
+
+
+
+
+      
     </section>
 
 
