@@ -439,6 +439,59 @@ x: {
 
 window.addEventListener("load", cargarGraficaMar);
 
+
+async function cargarMeteo() {
+  const estado = document.getElementById("meteo-estado");
+
+  const mostrar = (id, valor, unidad = "") => {
+    document.getElementById(id).textContent =
+      valor === null || valor === undefined
+        ? "--"
+        : String(valor).replace(".", ",") + unidad;
+  };
+
+  estado.textContent = "Actualizando datos meteorológicos...";
+
+  try {
+    const respuesta = await fetch(
+      "https://lumen-house-api.st08280.workers.dev/api/meteo",
+      { cache: "no-store" }
+    );
+
+    if (!respuesta.ok) {
+      throw new Error("Error HTTP " + respuesta.status);
+    }
+
+    const datos = await respuesta.json();
+
+    mostrar("meteo-temperatura", datos.temperaturaActual, " °C");
+    mostrar("meteo-sensacion", datos.sensacionTermica, " °C");
+    mostrar("meteo-viento", datos.velocidadViento, " km/h");
+
+    const direccion =
+      datos.direccionVientoGrados !== null &&
+      datos.direccionVientoGrados !== undefined
+        ? datos.direccionVientoGrados + "° (" +
+          (datos.direccionVientoCardinal || "--") + ")"
+        : "--";
+
+    document.getElementById("meteo-direccion").textContent = direccion;
+
+    mostrar("meteo-racha", datos.rachaMaximaHoy, " km/h");
+    mostrar("meteo-lluvia", datos.lluviaAcumuladaHoy, " mm");
+
+    estado.textContent = "Datos meteorológicos actualizados.";
+
+  } catch (error) {
+    console.error("Error meteorología:", error);
+    estado.textContent =
+      "No se han podido actualizar los datos meteorológicos.";
+  }
+}
+
+window.addEventListener("load", cargarMeteo);
+
+  
 </script>
 
   
