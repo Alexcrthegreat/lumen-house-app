@@ -63,13 +63,77 @@
   <main>
     <section class="card">
       <h2>🌡️ Aerotermia Samsung</h2>
-      <p>Temperatura actual:
-  <strong id="temp-actual">-- °C</strong>
-</p>
+     
+<div style="
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:#f3f7ff;
+  border:1px solid #cbdcf5;
+  border-radius:14px;
+  padding:16px 12px;
+  margin:16px 0;
+  box-sizing:border-box;
+  width:100%;
+">
 
-<p>Temperatura objetivo:
-  <strong id="temp-objetivo">-- °C</strong>
-</p>
+  <!-- Icono termómetro -->
+  <div style="
+    width:48px;
+    height:48px;
+    flex-shrink:0;
+    border-radius:50%;
+    background:#dcecff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  ">
+    <svg width="26" height="26" viewBox="0 0 24 24"
+         fill="none" stroke="#1747b5"
+         stroke-width="2" stroke-linecap="round"
+         stroke-linejoin="round" aria-hidden="true">
+      <path d="M14 14.76V5a3 3 0 0 0-6 0v9.76a5 5 0 1 0 6 0Z"/>
+      <path d="M11 10v8"/>
+    </svg>
+  </div>
+
+  <!-- Temperatura actual -->
+  <div style="flex:1;min-width:0;text-align:center;">
+    <div style="font-size:12px;color:#253858;font-weight:600;">
+      Temperatura actual
+    </div>
+    <strong id="temp-actual" style="
+      display:block;
+      margin-top:5px;
+      font-size:clamp(20px,5vw,30px);
+      color:#1747b5;
+      white-space:nowrap;
+    ">-- °C</strong>
+  </div>
+
+  <!-- Separador -->
+  <div style="
+    width:1px;
+    height:54px;
+    background:#cbd5e1;
+    flex-shrink:0;
+  "></div>
+
+  <!-- Temperatura objetivo -->
+  <div style="flex:1;min-width:0;text-align:center;">
+    <div style="font-size:12px;color:#253858;font-weight:600;">
+      Temperatura objetivo
+    </div>
+    <strong id="temp-objetivo" style="
+      display:block;
+      margin-top:5px;
+      font-size:clamp(20px,5vw,30px);
+      color:#111827;
+      white-space:nowrap;
+    ">-- °C</strong>
+  </div>
+
+</div>
 
 <button id="btn-temperaturas" onclick="actualizarTemperaturas()">
   🌡️ Actualizar temperaturas
