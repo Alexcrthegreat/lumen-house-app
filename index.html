@@ -489,7 +489,23 @@ async function cargarMeteo() {
   }
 }
 
-window.addEventListener("load", cargarMeteo);
+
+window.addEventListener("load", () => {
+  cargarMeteo();
+
+  setInterval(() => {
+    if (document.visibilityState === "visible") {
+      cargarMeteo();
+    }
+  }, 5 * 60 * 1000);
+});
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") {
+    cargarMeteo();
+  }
+});
+
 
   
 </script>
