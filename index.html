@@ -189,12 +189,74 @@
 
 </div>
 
-<button id="btn-temperaturas" onclick="actualizarTemperaturas()">
-  🌡️ Actualizar temperaturas
-</button>
 
-<p id="estado-temperaturas" role="status" aria-live="polite"></p>
-<p id="fecha-temperaturas" class="note"></p>
+<div style="display:grid;gap:12px;margin:18px 0;">
+
+  <!-- ACTIVAR ALERTA -->
+  <button type="button"
+    onclick="ejecutar('activar')"
+    style="width:100%;background:#078b25;color:white;
+    border:0;border-radius:10px;padding:14px 16px;
+    font-size:16px;font-weight:600;text-align:left;">
+    🔔 &nbsp;Activar alerta
+  </button>
+
+  <!-- DESACTIVAR ALERTA -->
+  <button type="button"
+    onclick="ejecutar('desactivar')"
+    style="width:100%;background:#ef3036;color:white;
+    border:0;border-radius:10px;padding:14px 16px;
+    font-size:16px;font-weight:600;text-align:left;">
+    🔕 &nbsp;Desactivar alerta
+  </button>
+
+  <!-- ACTUALIZAR TEMPERATURAS -->
+  <div>
+    <button type="button"
+      id="btn-temperaturas"
+      onclick="actualizarTemperaturas()"
+      style="width:100%;background:#075bc9;color:white;
+      border:0;border-radius:10px;padding:14px 16px;
+      font-size:16px;font-weight:600;text-align:left;">
+      🔄 &nbsp;Actualizar temperaturas
+    </button>
+
+    <p id="estado-temperaturas"
+       role="status"
+       aria-live="polite"
+       style="margin:8px 4px 2px;font-size:13px;">
+    </p>
+
+    <p id="fecha-temperaturas"
+       class="note"
+       style="margin:2px 4px 0;font-size:12px;">
+    </p>
+  </div>
+
+  <!-- CONSULTAR TEMPERATURA -->
+  <div>
+    <button type="button"
+      onclick="consultarTemperaturaACS()"
+      style="width:100%;background:#168ee0;color:white;
+      border:0;border-radius:10px;padding:14px 16px;
+      font-size:16px;font-weight:600;text-align:left;">
+      🌡️ &nbsp;Consultar temperatura
+    </button>
+
+    <p id="estado-consulta-acs"
+       role="status"
+       aria-live="polite"
+       style="margin:8px 4px 2px;font-size:13px;">
+    </p>
+
+    <p id="fecha-consulta-acs"
+       class="note"
+       style="margin:2px 4px 0;font-size:12px;">
+    </p>
+  </div>
+
+</div>
+
       
 <div class="buttons">
   <button onclick="ejecutar('activar')">
@@ -404,12 +466,37 @@ function cerrarSesion() {
   alert("Clave eliminada de este dispositivo.");
 }
 
+
+async function consultarTemperaturaACS() {
+  const estado = document.getElementById("estado-consulta-acs");
+  const fecha = document.getElementById("fecha-consulta-acs");
+
+  estado.textContent = "Enviando consulta a GitHub Actions...";
+
+  try {
+    await ejecutar("consultar_temperatura");
+
+    fecha.textContent = "Última solicitud: " +
+      new Date().toLocaleString("es-ES");
+
+    estado.textContent =
+      "Consulta solicitada. Comprueba la notificación en tu móvil.";
+
+  } catch (error) {
+    estado.textContent =
+      "No se ha podido solicitar la consulta.";
+  }
+}
+
   
+
 async function ejecutar(accion) {
   const resultado = document.getElementById("resultado");
 
   const clave = obtenerClave();
-  if (!clave) return;
+  if (!clave) {
+    return false;
+  }
 
   resultado.textContent = "Enviando solicitud...";
 
@@ -428,15 +515,41 @@ async function ejecutar(accion) {
     if (!response.ok) {
       resultado.textContent =
         data.error || "Error al ejecutar la rutina.";
-      return;
+      return false;
     }
 
-    resultado.textContent =
-      "Solicitud enviada: " + accion;
+    resultado.textContent = "Solicitud enviada: " + accion;
+
+    return true;
 
   } catch (error) {
     resultado.textContent =
       "No se ha podido conectar con Cloudflare.";
+
+    return false;
+  }
+}
+
+
+async function consultarTemperaturaACS() {
+  const estado = document.getElementById("estado-consulta-acs");
+  const fecha = document.getElementById("fecha-consulta-acs");
+
+  estado.textContent = "Enviando consulta...";
+  
+  const correcto = await ejecutar("consultar_temperatura");
+
+  if (correcto) {
+    estado.textContent =
+      "Consulta enviada correctamente a GitHub Actions.";
+
+    fecha.textContent =
+      "Última solicitud: " +
+      new Date().toLocaleString("es-ES");
+
+  } else {
+    estado.textContent =
+      "No se ha podido enviar la consulta.";
   }
 }
   
