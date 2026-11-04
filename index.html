@@ -579,12 +579,12 @@ async function actualizarTokenSamsung() {
     return;
   }
 
-  const clave = prompt("Introduce la clave de actualización del token:");
+  const clave = obtenerClave();
 
-  if (!clave) {
-    estado.textContent = "Actualización cancelada.";
-    return;
-  }
+if (!clave) {
+  estado.textContent = "Debes iniciar sesión en Lumen House.";
+  return;
+}
 
   estado.textContent = "Validando y guardando token...";
   campo.disabled = true;
