@@ -569,6 +569,56 @@ document.addEventListener("visibilitychange", () => {
 });
 
 
+async function actualizarTokenSamsung() {
+  const campo = document.getElementById("nuevo-token-samsung");
+  const estado = document.getElementById("estado-token-samsung");
+  const token = campo.value.trim();
+
+  if (!token) {
+    estado.textContent = "Introduce el nuevo token Samsung.";
+    return;
+  }
+
+  const clave = prompt("Introduce la clave de actualización del token:");
+
+  if (!clave) {
+    estado.textContent = "Actualización cancelada.";
+    return;
+  }
+
+  estado.textContent = "Validando y guardando token...";
+  campo.disabled = true;
+
+  try {
+    const respuesta = await fetch(
+      "https://lumen-house-api.st08280.workers.dev/api/token/actualizar",
+      {
+        method: "POST",
+        cache: "no-store",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${clave}`
+        },
+        body: JSON.stringify({ token })
+      }
+    );
+
+    const datos = await respuesta.json();
+
+    if (!respuesta.ok || !datos.ok) {
+      throw new Error(datos.error || `Error HTTP ${respuesta.status}`);
+    }
+
+    campo.value = "";
+    estado.textContent = "Token Samsung actualizado correctamente.";
+
+  } catch (error) {
+    estado.textContent = "Error: " + error.message;
+  } finally {
+    campo.disabled = false;
+  }
+}
+
   
 </script>
 
