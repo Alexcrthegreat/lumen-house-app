@@ -414,57 +414,172 @@
     </section>
 
 
+
 <section class="card">
-  <h2>🌤️ Estación meteorológica</h2>
-  <h3>El Port de la Selva</h3>
 
-  <p>🌡️ Temperatura actual:
-    <strong id="meteo-temperatura">-- °C</strong>
+  <!-- ENCABEZADO -->
+  <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">
+    <div style="
+      width:54px;height:54px;min-width:54px;
+      border-radius:50%;background:#dcecff;
+      display:flex;align-items:center;justify-content:center;
+      font-size:27px;">
+      🌤️
+    </div>
+    <div>
+      <h2 style="margin:0 0 5px;font-size:22px;color:#111827;">
+        Estación meteorológica
+      </h2>
+      <p style="margin:0;font-size:13px;color:#596579;">
+        El Port de la Selva · Datos en directo
+      </p>
+    </div>
+  </div>
+
+  <!-- TEMPERATURAS -->
+  <div style="
+    background:#f3f7ff;border:1px solid #cbdcf5;
+    border-radius:14px;padding:16px;margin-bottom:12px;">
+
+    <div style="font-size:12px;color:#596579;
+      font-weight:600;margin-bottom:12px;">
+      TEMPERATURA
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+
+      <div style="min-width:0;">
+        <div style="font-size:12px;color:#253858;">
+          🌡️ Actual
+        </div>
+        <strong id="meteo-temperatura" style="
+          display:block;margin-top:6px;
+          font-size:clamp(18px,5vw,28px);
+          color:#1747b5;white-space:nowrap;">
+          -- °C
+        </strong>
+      </div>
+
+      <div style="min-width:0;">
+        <div style="font-size:12px;color:#253858;">
+          🌡️ Sensación térmica
+        </div>
+        <strong id="meteo-sensacion" style="
+          display:block;margin-top:6px;
+          font-size:clamp(18px,5vw,28px);
+          color:#111827;white-space:nowrap;">
+          -- °C
+        </strong>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- VIENTO -->
+  <div style="
+    background:#f3f7ff;border:1px solid #cbdcf5;
+    border-radius:14px;padding:16px;margin-bottom:12px;">
+
+    <div style="display:flex;align-items:center;
+      gap:8px;margin-bottom:14px;color:#253858;
+      font-size:15px;font-weight:600;">
+      💨 Viento
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+
+      <div style="min-width:0;">
+        <div style="font-size:12px;color:#596579;">
+          Velocidad actual
+        </div>
+        <strong id="meteo-viento" style="
+          display:block;margin-top:6px;
+          font-size:clamp(15px,4vw,23px);
+          color:#1747b5;">
+          -- km/h
+        </strong>
+      </div>
+
+      <div style="min-width:0;">
+        <div style="font-size:12px;color:#596579;">
+          Racha máxima hoy
+        </div>
+        <strong id="meteo-racha" style="
+          display:block;margin-top:6px;
+          font-size:clamp(15px,4vw,23px);
+          color:#111827;">
+          -- km/h
+        </strong>
+      </div>
+
+    </div>
+
+    <div style="
+      border-top:1px solid #cbdcf5;
+      margin-top:14px;padding-top:12px;
+      display:flex;justify-content:space-between;
+      align-items:center;gap:10px;">
+
+      <span style="font-size:13px;color:#596579;">
+        Dirección del viento
+      </span>
+
+      <strong id="meteo-direccion" style="
+        font-size:15px;color:#111827;">
+        --
+      </strong>
+
+    </div>
+  </div>
+
+  <!-- LLUVIA -->
+  <div style="
+    background:#f3f7ff;border:1px solid #cbdcf5;
+    border-radius:14px;padding:16px;margin-bottom:14px;">
+
+    <div style="font-size:12px;color:#596579;">
+      🌧️ Lluvia acumulada hoy
+    </div>
+
+    <strong id="meteo-lluvia" style="
+      display:block;margin-top:6px;
+      font-size:25px;color:#1747b5;">
+      -- mm
+    </strong>
+  </div>
+
+  <!-- ACTUALIZACIÓN -->
+  <p class="note" style="margin:10px 0 6px;">
+    🕒 Última actualización:
+    <strong id="meteo-fecha">--</strong>
   </p>
 
-  <p>🌡️ Sensación térmica:
-    <strong id="meteo-sensacion">-- °C</strong>
-  </p>
-
-  <p>💨 Velocidad del viento:
-    <strong id="meteo-viento">-- km/h</strong>
-  </p>
-
-  <p>🧭 Dirección del viento:
-    <strong id="meteo-direccion">--</strong>
-  </p>
-
-  <p>🌬️ Racha máxima de hoy:
-    <strong id="meteo-racha">-- km/h</strong>
-  </p>
-
-  <p>🌧️ Lluvia acumulada hoy:
-    <strong id="meteo-lluvia">-- mm</strong>
-  </p>
-
-<p class="note">
-  🕒 Última actualización:
-  <strong id="meteo-fecha">--</strong>
-</p>
-  
-  <p id="meteo-estado" role="status">
+  <p id="meteo-estado" role="status"
+     style="font-size:13px;color:#596579;margin:6px 0;">
     Datos pendientes de cargar.
   </p>
 
-  <p class="note">
+  <p class="note" style="font-size:12px;margin:10px 0;">
     Fuente: Estació Meteorològica El Port de la Selva
   </p>
-  
-<a href="https://www.cnps.cat/panoramica.html"
-   target="_blank"
-   rel="noopener noreferrer"
-   style="display:block; text-align:center; background:#0077b6;
-          color:white; padding:14px; border-radius:12px;
-          text-decoration:none; font-weight:bold; margin-top:18px;">
-  📷 Ver cámara en directo
-</a>
+
+  <!-- CÁMARA EN DIRECTO -->
+  <a href="https://www.cnps.cat/panoramica.html"
+     target="_blank"
+     rel="noopener noreferrer"
+     style="
+       display:flex;align-items:center;
+       justify-content:center;gap:10px;
+       width:100%;box-sizing:border-box;
+       background:#0077b6;color:white;
+       padding:14px;border-radius:12px;
+       text-decoration:none;font-weight:600;
+       margin-top:18px;">
+    📷 Ver cámara en directo
+  </a>
 
 </section>
+
 
     
    
