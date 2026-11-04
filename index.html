@@ -92,10 +92,6 @@
 </div>
 
 <p id="resultado" role="status" aria-live="polite"></p>
-<button onclick="cerrarSesion()">
-  Cerrar sesión
-</button>
-
       <p class="note">
         Controles pendientes de conectar con GitHub.
       </p>
@@ -229,9 +225,31 @@
   <p class="note">
     Fuente: SeaTemperature.info
   </p>
-</section>
 
-  </main>
+</section>
+  
+<div style="margin:24px 0 32px; text-align:center;">
+  <button
+    type="button"
+    onclick="cerrarSesion()"
+    style="
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding:12px 22px;
+      background:#e5e7eb;
+      color:#1f2937;
+      border:1px solid #cbd5e1;
+      border-radius:9px;
+      font-weight:600;
+    ">
+    <span aria-hidden="true">⇥</span>
+    Cerrar sesión
+  </button>
+</div>
+
+</main>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
   
 <script>
