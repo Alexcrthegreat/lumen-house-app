@@ -1282,6 +1282,208 @@ document.addEventListener("visibilitychange", () => {
 });
 
 
+let graficaGoodWe = null;
+let goodweCargando = false;
+
+async function cargarGoodWe() {
+  if (goodweCargando) return;
+
+  const estado = document.getElementById("goodwe-estado");
+  const clave = obtenerClave();
+  if (!clave) {
+    estado.textContent = "Introduce la clave para consultar GoodWe.";
+    return;
+  }
+
+  goodweCargando = true;
+  estado.textContent = "Actualizando datos solares...";
+
+  try {
+    const respuesta = await fetch(
+      "https://lumen-house-api.st08280.workers.dev/api/goodwe",
+      {
+        method: "GET",
+        cache: "no-store",
+        headers: {
+          "Authorization": "Bearer " + clave
+        }
+      }
+    );
+
+    if (!respuesta.ok) {
+      throw new Error("Error HTTP " + respuesta.status);
+    }
+
+    const datos = await respuesta.json();
+
+    if (!datos.ok || !datos.curvas) {
+      throw new Error("Datos solares no disponibles");
+    }
+
+    const solar = datos.curvas.pSystem || [];
+    const consumo = datos.curvas.pConsum || [];
+    const red = datos.curvas.pGrid || [];
+
+    const ultimaPotencia = serie => {
+      const ultimo = serie[serie.length - 1];
+      return ultimo ? Number(ultimo.potencia) : null;
+    };
+
+    const mostrar = (id, valor) => {
+      document.getElementById(id).textContent =
+        valor === null || !Number.isFinite(valor)
+          ? "--"
+          : valor.toFixed(2).replace(".", ",");
+    };
+
+    mostrar("goodwe-solar", ultimaPotencia(solar));
+    mostrar("goodwe-consumo", ultimaPotencia(consumo));
+    mostrar("goodwe-red", ultimaPotencia(red));
+
+    document.getElementById("goodwe-hora").textContent =
+      datos.ultimaLectura || "--";
+
+    const crearSerie = (nombre, registros, color) => ({
+      label: nombre,
+      data: registros.map(p => ({
+        x: p.hora,
+        y: Number(p.potencia)
+      })),
+      borderColor: color,
+      backgroundColor: color,
+      borderWidth: 2,
+      pointRadius: 0,
+      pointHoverRadius: 4,
+      tension: 0.15,
+      spanGaps: false
+    });
+
+    const etiquetas = [...new Set(
+      [...solar, ...consumo, ...red].map(p => p.hora)
+    )].sort();
+
+    const convertir = registros => {
+      const valores = new Map(
+        registros.map(p => [p.hora, Number(p.potencia)])
+      );
+      return etiquetas.map(hora =>
+        valores.has(hora) ? valores.get(hora) : null
+      );
+    };
+
+    const datasets = [
+      {
+        ...crearSerie("Producción solar", solar, "#d39b00"),
+        data: convertir(solar)
+      },
+      {
+        ...crearSerie("Consumo vivienda", consumo, "#9464bc"),
+        data: convertir(consumo)
+      },
+      {
+        ...crearSerie("Intercambio red", red, "#2388d4"),
+        data: convertir(red)
+      }
+    ];
+
+    const contexto = document.getElementById(
+      "grafica-goodwe"
+    ).getContext("2d");
+
+    if (graficaGoodWe) {
+      graficaGoodWe.destroy();
+    }
+
+    graficaGoodWe = new Chart(contexto, {
+      type: "line",
+      data: {
+        labels: etiquetas,
+        datasets
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: "index",
+          intersect: false
+        },
+        plugins: {
+          legend: {
+            display: true,
+            position: "bottom",
+            onClick: (evento, item, leyenda) => {
+              const indice = item.datasetIndex;
+              const grafica = leyenda.chart;
+              grafica.setDatasetVisibility(
+                indice,
+                !grafica.isDatasetVisible(indice)
+              );
+              grafica.update();
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: contexto =>
+                contexto.dataset.label + ": " +
+                contexto.parsed.y.toFixed(2) + " kW"
+            }
+          }
+        },
+        scales: {
+          x: {
+            ticks: {
+              maxTicksLimit: 7,
+              maxRotation: 0
+            },
+            grid: {
+              display: false
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: "Potencia (kW)"
+            }
+          }
+        }
+      }
+    });
+
+    estado.textContent =
+      "Datos del " +
+      datos.fecha.split("-").reverse().join("/") +
+      " · Última lectura: " +
+      (datos.ultimaLectura || "--") +
+      " · Red negativa = importación";
+
+  } catch (error) {
+    console.error("Error GoodWe:", error);
+    estado.textContent =
+      "No se han podido cargar los datos solares: " +
+      error.message;
+  } finally {
+    goodweCargando = false;
+  }
+}
+
+window.addEventListener("load", () => {
+  cargarGoodWe();
+
+  setInterval(() => {
+    if (document.visibilityState === "visible") {
+      cargarGoodWe();
+    }
+  }, 5 * 60 * 1000);
+});
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") {
+    cargarGoodWe();
+  }
+});
+
+  
+
 async function actualizarTokenSamsung() {
   const campo = document.getElementById("nuevo-token-samsung");
   const estado = document.getElementById("estado-token-samsung");
