@@ -142,6 +142,94 @@ jobs:
                   print("UID recibido:", bool(result["data"].get("uid")))
                   print("UUID recibido:", bool(result["data"].get("uuid")))
                   print("API recibida:", bool(result["data"].get("api")))
+                  # Consultar curvas de la instalación fotovoltaica
+                  from datetime import datetime
+                  from zoneinfo import ZoneInfo
+                  
+                  sesion = result["data"]
+                  
+                  fecha = datetime.now(
+                      ZoneInfo("Europe/Madrid")
+                  ).strftime("%Y-%m-%d")
+                  
+                  payload_solar = {
+                      "stationId": "2451b310-d5f8-4cc7-8583-ce92b7e25c31",
+                      "items": [
+                          "pSystem",
+                          "pConsum",
+                          "pGrid",
+                          "workStatus",
+                          "gridConnStu"
+                      ],
+                      "timeScale": 1,
+                      "timeZone": -1,
+                      "startTime": fecha + " 00:00:00",
+                      "endTime": fecha + " 23:59:59"
+                  }
+                  
+                  # Utilizar los datos de la sesión autenticada
+                  token_sesion = json.dumps(
+                      sesion,
+                      separators=(",", ":"),
+                      ensure_ascii=False
+                  )
+                  
+                  timestamp_solar = str(int(time.time() * 1000))
+                  
+                  texto_solar = (
+                      f"{timestamp_solar}@"
+                      f"{sesion['uid']}@"
+                      f"{sesion['token']}"
+                  )
+                  
+                  hash_solar = hashlib.sha256(
+                      texto_solar.encode("utf-8")
+                  ).hexdigest()
+                  
+                  firma_solar = base64.b64encode(
+                      f"{hash_solar}@{timestamp_solar}".encode("utf-8")
+                  ).decode("ascii")
+                  
+                  headers_solar = headers.copy()
+                  headers_solar["Token"] = token_sesion
+                  headers_solar["Uuid"] = str(sesion["uuid"])
+                  headers_solar["X-Signature"] = firma_solar
+                  
+                  url_solar = (
+                      "https://eu-gateway.semsportal.com"
+                      "/web/sems/sems-plant/api/v1/hems/power/statisticsAndPreV2"
+                  )
+                  
+                  peticion_solar = urllib.request.Request(
+                      url_solar,
+                      data=json.dumps(payload_solar).encode("utf-8"),
+                      headers=headers_solar,
+                      method="POST"
+                  )
+                  
+                  with urllib.request.urlopen(
+                      peticion_solar, timeout=30
+                  ) as respuesta_solar:
+                      datos_solares = json.load(respuesta_solar)
+                  
+                  print("GOODWE DATOS - Codigo:", datos_solares.get("code"))
+                  
+                  if datos_solares.get("code") == "00000":
+                      series = datos_solares.get("data", {}).get("dataList", [])
+                  
+                      for serie in series:
+                          if serie.get("item") in ("pSystem", "pConsum", "pGrid"):
+                              print(
+                                  serie["item"],
+                                  "- registros:",
+                                  len(serie.get("powerData", []))
+                              )
+                  else:
+                      print(
+                          "GOODWE DATOS - Descripcion:",
+                          str(datos_solares.get("description", ""))[:150]
+                      )
+                      raise SystemExit(1)
               else:
                   print("GOODWE LOGIN: NO VALIDADO")
                   print("Codigo:", codigo[:40])
