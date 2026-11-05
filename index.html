@@ -1034,6 +1034,94 @@ async function consultarTemperaturaACS() {
       "No se ha podido enviar la consulta.";
   }
 }
+
+
+async function establecerTemperaturaACS40() {
+  const estado = document.getElementById("estado-acs-40");
+  const boton = document.getElementById("btn-acs-40");
+
+  const clave = obtenerClave();
+  if (!clave) return;
+
+  const confirmar = confirm(
+    "¿Quieres establecer la temperatura objetivo del ACS en 40 °C?"
+  );
+
+  if (!confirmar) return;
+
+  boton.disabled = true;
+  estado.textContent = "Enviando orden a SmartThings...";
+
+  try {
+    const respuesta = await fetch(
+      "https://lumen-house-api.st08280.workers.dev/api/acs/temperatura",
+      {
+        method: "POST",
+        cache: "no-store",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + clave
+        },
+        body: JSON.stringify({})
+      }
+    );
+
+    const datos = await respuesta.json();
+
+    if (!respuesta.ok || !datos.ok) {
+      throw new Error(
+        datos.error || "No se ha podido cambiar la temperatura"
+      );
+    }
+
+    estado.textContent =
+      "Orden enviada. Comprobando temperatura objetivo...";
+
+    // Dar tiempo a SmartThings para actualizar el estado
+    await new Promise(resolve => setTimeout(resolve, 3000));
+
+    const comprobacion = await fetch(
+      "https://lumen-house-api.st08280.workers.dev/api/temperaturas",
+      {
+        method: "POST",
+        cache: "no-store",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + clave
+        },
+        body: JSON.stringify({})
+      }
+    );
+
+    const temperaturas = await comprobacion.json();
+
+    if (!comprobacion.ok || !temperaturas.ok) {
+      throw new Error(
+        "Orden enviada, pero no se ha podido verificar la temperatura"
+      );
+    }
+
+    document.getElementById("temp-actual").textContent =
+      Number(temperaturas.actual).toFixed(1) + " °C";
+
+    document.getElementById("temp-objetivo").textContent =
+      Number(temperaturas.objetivo).toFixed(1) + " °C";
+
+    if (Math.abs(Number(temperaturas.objetivo) - 40) < 0.1) {
+      estado.textContent =
+        "Temperatura objetivo confirmada: 40 °C.";
+    } else {
+      estado.textContent =
+        "Orden enviada, pero SmartThings indica una consigna de " +
+        temperaturas.objetivo + " °C. Comprueba el equipo.";
+    }
+
+  } catch (error) {
+    estado.textContent = "Error: " + error.message;
+  } finally {
+    boton.disabled = false;
+  }
+}
   
 async function actualizarTemperaturas() {
   const estado = document.getElementById("estado-temperaturas");
