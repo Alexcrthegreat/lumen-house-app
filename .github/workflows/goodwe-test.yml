@@ -139,6 +139,9 @@ jobs:
               ):
                   print("GOODWE LOGIN: CORRECTO")
                   print("Token de sesion recibido: SI")
+                  print("UID recibido:", bool(result["data"].get("uid")))
+                  print("UUID recibido:", bool(result["data"].get("uuid")))
+                  print("API recibida:", bool(result["data"].get("api")))
               else:
                   print("GOODWE LOGIN: NO VALIDADO")
                   print("Codigo:", codigo[:40])
