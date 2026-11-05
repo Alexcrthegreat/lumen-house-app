@@ -23,16 +23,19 @@ jobs:
           import json
           import hashlib
           import base64
+          import time
+          import uuid
           import urllib.request
           import urllib.error
 
           user = os.environ["GOODWE_USER"]
           password = os.environ["GOODWE_PASSWORD"]
-          print("Usuario configurado:", bool(user))
-          print("Contraseña configurada:", bool(password))
-          print("Contraseña con espacios exteriores:", password != password.strip())
-          print("Usuario con espacios exteriores:", user != user.strip())
 
+          if not user or not password:
+              print("ERROR: faltan credenciales GoodWe")
+              raise SystemExit(1)
+
+          # Transformacion de la contraseña observada en SEMS+
           md5_hex = hashlib.md5(
               password.encode("utf-8")
           ).hexdigest()
@@ -40,9 +43,39 @@ jobs:
           encoded_password = base64.b64encode(
               md5_hex.encode("utf-8")
           ).decode("ascii")
-          print("Longitud MD5:", len(md5_hex))
-          print("Longitud pwd:", len(encoded_password))
-          print("Base64 valido:", base64.b64decode(encoded_password).decode("ascii") == md5_hex)
+
+          # Token inicial previo al login
+          token_inicial = {
+              "uid": "",
+              "timestamp": 0,
+              "token": "",
+              "client": "semsPlusWeb",
+              "version": "",
+              "language": "en"
+          }
+
+          token_json = json.dumps(
+              token_inicial,
+              separators=(",", ":"),
+              ensure_ascii=False
+          )
+
+          # X-Signature:
+          # Base64(SHA256(timestamp@uid@token)@timestamp)
+          timestamp = str(int(time.time() * 1000))
+
+          texto_firma = f"{timestamp}@@"
+
+          hash_firma = hashlib.sha256(
+              texto_firma.encode("utf-8")
+          ).hexdigest()
+
+          signature = base64.b64encode(
+              f"{hash_firma}@{timestamp}".encode("utf-8")
+          ).decode("ascii")
+
+          # Identificador generado para la peticion
+          request_uuid = str(uuid.uuid4())
 
           payload = {
               "account": user,
@@ -57,22 +90,39 @@ jobs:
               "/web/sems/sems-user/api/v1/auth/cross-login"
           )
 
+          headers = {
+              "Content-Type": "application/json",
+              "Accept": "application/json, text/plain, */*",
+              "Token": token_json,
+              "Uuid": request_uuid,
+              "X-Signature": signature,
+              "Currentlang": "en",
+              "Neutral": "0",
+              "Origin": "https://eu-semsplus.goodwe.com",
+              "Referer": "https://eu-semsplus.goodwe.com/",
+              "Os": "Windows 10.0 desktop",
+              "Brand": "Chrome 153.0.0.0 Google Inc. es-ES Europe/Madrid",
+              "User-Agent": (
+                  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                  "AppleWebKit/537.36 (KHTML, like Gecko) "
+                  "Chrome/153.0.0.0 Safari/537.36"
+              )
+          }
+
           request = urllib.request.Request(
               url,
-              data=json.dumps(payload).encode("utf-8"),
-              headers={
-                  "Content-Type": "application/json",
-                  "Accept": "application/json, text/plain, */*",
-                  "Currentlang": "en",
-                  "Neutral": "0",
-                  "Origin": "https://eu-semsplus.goodwe.com",
-                  "Referer": "https://eu-semsplus.goodwe.com/",
-                  "Os": "Windows 10.0 desktop",
-                  "Brand": "Chrome 153.0.0.0 Google Inc. es-ES Europe/Madrid",
-                  "User-Agent": "Mozilla/5.0"
-              },
+              data=json.dumps(
+                  payload,
+                  separators=(",", ":")
+              ).encode("utf-8"),
+              headers=headers,
               method="POST"
           )
+
+          print("Iniciando autenticacion GoodWe...")
+          print("Token inicial generado: SI")
+          print("X-Signature generada: SI")
+          print("Uuid generado: SI")
 
           try:
               with urllib.request.urlopen(
@@ -80,18 +130,33 @@ jobs:
               ) as response:
                   result = json.load(response)
 
-              if result.get("code") == "00000" and result.get("data", {}).get("token"):
+              codigo = str(result.get("code", "sin codigo"))
+
+              if (
+                  codigo == "00000"
+                  and isinstance(result.get("data"), dict)
+                  and result["data"].get("token")
+              ):
                   print("GOODWE LOGIN: CORRECTO")
+                  print("Token de sesion recibido: SI")
               else:
                   print("GOODWE LOGIN: NO VALIDADO")
-                  print("Codigo:", str(result.get("code", "sin codigo"))[:40])
-                  print("Descripcion:", str(result.get("description", "sin descripcion"))[:200])
+                  print("Codigo:", codigo[:40])
+                  print(
+                      "Descripcion:",
+                      str(result.get(
+                          "description",
+                          "sin descripcion"
+                      ))[:200]
+                  )
                   raise SystemExit(1)
 
           except urllib.error.HTTPError as error:
               print("GOODWE LOGIN: ERROR HTTP", error.code)
               raise SystemExit(1)
-          except Exception as error:
-              print("GOODWE LOGIN: ERROR", type(error).__name__)
+
+          except urllib.error.URLError as error:
+              print("GOODWE LOGIN: ERROR DE CONEXION")
               raise SystemExit(1)
+
           PY
