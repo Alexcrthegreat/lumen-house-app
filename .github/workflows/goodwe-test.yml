@@ -28,6 +28,10 @@ jobs:
 
           user = os.environ["GOODWE_USER"]
           password = os.environ["GOODWE_PASSWORD"]
+          print("Usuario configurado:", bool(user))
+          print("Contraseña configurada:", bool(password))
+          print("Contraseña con espacios exteriores:", password != password.strip())
+          print("Usuario con espacios exteriores:", user != user.strip())
 
           md5_hex = hashlib.md5(
               password.encode("utf-8")
