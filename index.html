@@ -248,6 +248,37 @@
     🔕 &nbsp;Desactivar alerta
   </button>
 
+<!-- ESTABLECER ACS A 40 GRADOS -->
+<div>
+  <button
+    type="button"
+    id="btn-acs-40"
+    onclick="establecerTemperaturaACS40()"
+    style="
+      width:100%;
+      background:#075bc9;
+      color:white;
+      border:0;
+      border-radius:10px;
+      padding:14px 16px;
+      font-size:16px;
+      font-weight:600;
+      text-align:left;
+    ">
+    🌡️ &nbsp;Establecer ACS a 40 °C
+  </button>
+
+  <p
+    id="estado-acs-40"
+    role="status"
+    aria-live="polite"
+    style="margin:8px 4px 2px;font-size:13px;">
+  </p>
+</div>
+
+
+
+  
   <!-- ACTUALIZAR TEMPERATURAS -->
   <div>
     <button type="button"
