@@ -55,7 +55,14 @@ jobs:
               data=json.dumps(payload).encode("utf-8"),
               headers={
                   "Content-Type": "application/json",
-                  "Accept": "application/json"
+                  "Accept": "application/json, text/plain, */*",
+                  "Currentlang": "en",
+                  "Neutral": "0",
+                  "Origin": "https://eu-semsplus.goodwe.com",
+                  "Referer": "https://eu-semsplus.goodwe.com/",
+                  "Os": "Windows 10.0 desktop",
+                  "Brand": "Chrome 153.0.0.0 Google Inc. es-ES Europe/Madrid",
+                  "User-Agent": "Mozilla/5.0"
               },
               method="POST"
           )
