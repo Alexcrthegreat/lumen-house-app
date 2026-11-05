@@ -71,7 +71,7 @@ jobs:
               else:
                   print("GOODWE LOGIN: NO VALIDADO")
                   print("Codigo:", str(result.get("code", "sin codigo"))[:40])
-                 print("Descripcion:", str(result.get("description", "sin descripcion"))[:200])
+                  print("Descripcion:", str(result.get("description", "sin descripcion"))[:200])
                   raise SystemExit(1)
 
           except urllib.error.HTTPError as error:
