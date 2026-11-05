@@ -36,6 +36,9 @@ jobs:
           encoded_password = base64.b64encode(
               md5_hex.encode("utf-8")
           ).decode("ascii")
+          print("Longitud MD5:", len(md5_hex))
+          print("Longitud pwd:", len(encoded_password))
+          print("Base64 valido:", base64.b64decode(encoded_password).decode("ascii") == md5_hex)
 
           payload = {
               "account": user,
