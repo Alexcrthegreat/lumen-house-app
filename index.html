@@ -956,8 +956,31 @@ function obtenerClave() {
 }
 
 function cerrarSesion() {
+
+  // Eliminar la clave de acceso
   localStorage.removeItem("lumen_house_key");
-  alert("Clave eliminada de este dispositivo.");
+
+  // Ocultar temperaturas ACS
+  document.getElementById("temp-actual").textContent = "-- °C";
+  document.getElementById("temp-objetivo").textContent = "-- °C";
+
+  // Ocultar datos solares
+  document.getElementById("goodwe-solar").textContent = "--";
+  document.getElementById("goodwe-consumo").textContent = "--";
+  document.getElementById("goodwe-red").textContent = "--";
+  document.getElementById("goodwe-hora").textContent = "--";
+
+  // Actualizar banner ACS
+  const banner = document.getElementById("banner-estado-acs");
+
+  banner.textContent = "🔒 Sesión cerrada";
+  banner.style.background = "#f1f5f9";
+  banner.style.borderColor = "#cbd5e1";
+  banner.style.color = "#475569";
+
+  // Confirmar cierre de sesión
+  alert("Sesión cerrada correctamente.");
+
 }
 
 async function ejecutar(accion) {
@@ -1020,9 +1043,12 @@ async function actualizarBannerACS() {
   const clave = localStorage.getItem("lumen_house_key");
 
   if (!clave) {
-    banner.textContent = "⚪ Estado de alerta no disponible";
-    return;
-  }
+  banner.textContent = "🔒 Sesión cerrada";
+  banner.style.background = "#f1f5f9";
+  banner.style.borderColor = "#cbd5e1";
+  banner.style.color = "#475569";
+  return;
+}
 
   try {
     const respuesta = await fetch(
@@ -1041,7 +1067,7 @@ async function actualizarBannerACS() {
     }
 
     const datos = await respuesta.json();
-
+        
     if (datos.activa) {
       banner.textContent = "🔔 Alerta ACS activada";
       banner.style.background = "#dcfce7";
@@ -1456,7 +1482,9 @@ let goodweCargando = false;
 
 async function cargarGoodWe() {
   if (goodweCargando) return;
-
+  if (!localStorage.getItem("lumen_house_key")) {
+  return;
+  }
   const estado = document.getElementById("goodwe-estado");
   const clave = obtenerClave();
   if (!clave) {
@@ -1484,6 +1512,11 @@ async function cargarGoodWe() {
     }
 
     const datos = await respuesta.json();
+
+    // No mostrar datos si se ha cerrado sesión durante la consulta
+    if (localStorage.getItem("lumen_house_key") !== clave) {
+      return;
+    }
 
     if (!datos.ok || !datos.curvas) {
       throw new Error("Datos solares no disponibles");
