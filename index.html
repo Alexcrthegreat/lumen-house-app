@@ -619,6 +619,92 @@
 </section>
 
 
+
+<!-- ENERGÍA SOLAR GOODWE -->
+<section class="card" id="goodwe-card">
+
+  <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">
+    <div style="width:54px;height:54px;min-width:54px;
+      border-radius:50%;background:#dcecff;
+      display:flex;align-items:center;justify-content:center;
+      font-size:28px;">☀️</div>
+    <div>
+      <h2 style="margin:0 0 5px;font-size:22px;color:#111827;">
+        Energía solar
+      </h2>
+      <p style="margin:0;font-size:13px;color:#596579;">
+        GoodWe SEMS+ · Sobrevent FV
+      </p>
+    </div>
+  </div>
+
+  <div style="background:#f3f7ff;border:1px solid #cbdcf5;
+    border-radius:14px;padding:16px 10px;margin-bottom:18px;">
+
+    <div style="font-size:12px;color:#596579;
+      font-weight:600;margin-bottom:14px;">
+      POTENCIA ACTUAL
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:6px;text-align:center;">
+
+      <div style="min-width:0;">
+        <div style="font-size:12px;color:#253858;">Solar</div>
+        <strong id="goodwe-solar" style="display:block;margin-top:7px;
+          font-size:clamp(17px,4vw,27px);color:#d39b00;">--</strong>
+        <span style="font-size:12px;color:#596579;">kW</span>
+      </div>
+
+      <div style="min-width:0;border-left:1px solid #cbd5e1;">
+        <div style="font-size:12px;color:#253858;">Consumo</div>
+        <strong id="goodwe-consumo" style="display:block;margin-top:7px;
+          font-size:clamp(17px,4vw,27px);color:#9464bc;">--</strong>
+        <span style="font-size:12px;color:#596579;">kW</span>
+      </div>
+
+      <div style="min-width:0;border-left:1px solid #cbd5e1;">
+        <div style="font-size:12px;color:#253858;">Red</div>
+        <strong id="goodwe-red" style="display:block;margin-top:7px;
+          font-size:clamp(17px,4vw,27px);color:#2388d4;">--</strong>
+        <span style="font-size:12px;color:#596579;">kW</span>
+      </div>
+
+    </div>
+
+    <p style="font-size:12px;color:#596579;text-align:center;
+      margin:14px 0 0;">
+      Última lectura: <strong id="goodwe-hora">--</strong>
+    </p>
+  </div>
+
+  <h3 style="font-size:17px;color:#111827;margin:0 0 14px;">
+    📈 Evolución de hoy
+  </h3>
+
+  <div style="position:relative;width:100%;height:300px;
+    box-sizing:border-box;background:#ffffff;
+    border:1px solid #e2e8f0;border-radius:12px;padding:10px;">
+    <canvas id="grafica-goodwe"></canvas>
+  </div>
+
+  <p id="goodwe-estado" role="status"
+    style="font-size:13px;color:#596579;margin:14px 0 10px;">
+    Datos pendientes de cargar.
+  </p>
+
+  <button type="button" onclick="cargarGoodWe()"
+    style="width:100%;background:#075bc9;color:white;
+    border:0;border-radius:10px;padding:14px 16px;
+    font-size:15px;font-weight:600;text-align:center;">
+    🔄 Actualizar datos solares
+  </button>
+
+  <p style="font-size:12px;color:#64748b;margin:12px 0 0;">
+    ℹ️ Fuente: GoodWe SEMS+ · Actualización automática cada 5 minutos
+  </p>
+
+</section>
     
    
 <section class="card">
