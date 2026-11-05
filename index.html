@@ -230,6 +230,21 @@
 
 <div style="display:grid;gap:12px;margin:18px 0;">
 
+
+<!-- ESTADO DE LA ALERTA ACS -->
+<div id="banner-estado-acs"
+     style="padding:14px 16px;
+            border-radius:10px;
+            background:#f1f5f9;
+            border:1px solid #cbd5e1;
+            color:#475569;
+            font-size:16px;
+            font-weight:600;
+            text-align:center;">
+  🔄 Consultando estado de la alerta...
+</div>
+
+  
   <!-- ACTIVAR ALERTA -->
   <button type="button"
     onclick="ejecutar('activar')"
@@ -948,34 +963,10 @@ function cerrarSesion() {
   alert("Clave eliminada de este dispositivo.");
 }
 
-
-async function consultarTemperaturaACS() {
-  const estado = document.getElementById("estado-consulta-acs");
-  const fecha = document.getElementById("fecha-consulta-acs");
-
-  estado.textContent = "Enviando consulta a GitHub Actions...";
-
-  try {
-    await ejecutar("consultar_temperatura");
-
-    fecha.textContent = "Última solicitud: " +
-      new Date().toLocaleString("es-ES");
-
-    estado.textContent =
-      "Consulta solicitada. Comprueba la notificación en tu móvil.";
-
-  } catch (error) {
-    estado.textContent =
-      "No se ha podido solicitar la consulta.";
-  }
-}
-
-  
-
 async function ejecutar(accion) {
   const resultado = document.getElementById("resultado");
 
-  const clave = obtenerClave();
+  const clave = localStorage.getItem("lumen_house_key");
   if (!clave) {
     return false;
   }
@@ -1000,9 +991,14 @@ async function ejecutar(accion) {
       return false;
     }
 
-    resultado.textContent = "Solicitud enviada: " + accion;
+   
+resultado.textContent = "Solicitud enviada: " + accion;
 
-    return true;
+if (accion === "activar" || accion === "desactivar") {
+  await actualizarBannerACS();
+}
+
+return true;
 
   } catch (error) {
     resultado.textContent =
@@ -1012,6 +1008,63 @@ async function ejecutar(accion) {
   }
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+  // Consultar el estado al abrir la PWA
+  actualizarBannerACS();
+
+  // Actualizar automáticamente cada 30 segundos
+  setInterval(actualizarBannerACS, 30000);
+});
+
+async function actualizarBannerACS() {
+  const banner = document.getElementById("banner-estado-acs");
+  if (!banner) return;
+
+  const clave = localStorage.getItem("lumen_house_key");
+
+  if (!clave) {
+    banner.textContent = "⚪ Estado de alerta no disponible";
+    return;
+  }
+
+  try {
+    const respuesta = await fetch(
+      new URL("/api/acs/alerta-estado", API_URL).href,
+      {
+        method: "GET",
+        headers: {
+          "Authorization": "Bearer " + clave
+        },
+        cache: "no-store"
+      }
+    );
+
+    if (!respuesta.ok) {
+      throw new Error("Error consultando estado ACS");
+    }
+
+    const datos = await respuesta.json();
+
+    if (datos.activa) {
+      banner.textContent = "🔔 Alerta ACS activada";
+      banner.style.background = "#dcfce7";
+      banner.style.borderColor = "#86efac";
+      banner.style.color = "#166534";
+    } else {
+      banner.textContent = "🔕 Alerta ACS desactivada";
+      banner.style.background = "#f1f5f9";
+      banner.style.borderColor = "#cbd5e1";
+      banner.style.color = "#475569";
+    }
+
+  } catch (error) {
+    banner.textContent = "⚠️ No se puede consultar el estado";
+    banner.style.background = "#fef3c7";
+    banner.style.borderColor = "#fcd34d";
+    banner.style.color = "#92400e";
+  }
+}
+  
 
 async function consultarTemperaturaACS() {
   const estado = document.getElementById("estado-consulta-acs");
