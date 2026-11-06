@@ -1,5 +1,5 @@
 
-const CACHE_NAME = "lumen-house-v1";
+const CACHE_NAME = "lumen-house-v2";
 
 const FILES = [
   "./",
