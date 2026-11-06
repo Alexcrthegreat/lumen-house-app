@@ -732,7 +732,8 @@
   <canvas id="grafica-goodwe"></canvas>
 </div>
 
-<div id="leyenda-goodwe" style="
+
+<div id="leyenda-goodwe" class="leyenda-goodwe" style="
   display:flex;
   flex-direction:column;
   align-items:flex-start;
@@ -743,6 +744,17 @@
   font-size:13px;
   color:#596579;
 "></div>
+
+<style>
+  @media (min-width: 768px) {
+    #leyenda-goodwe {
+      flex-direction: row !important;
+      align-items: center !important;
+      gap: 24px !important;
+    }
+  }
+</style>
+
 
 
   <p id="goodwe-estado" role="status"
